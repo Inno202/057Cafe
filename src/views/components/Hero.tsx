@@ -57,10 +57,10 @@ export const Hero = ({ theme, onBookClick }: { theme: Theme, onBookClick?: () =>
         </motion.div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce">
+      {/* <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce">
         <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Scroll Down</span>
         <div className="w-px h-12 bg-white/30" />
-      </div>
+      </div> */}
     </section>
   );
 };
