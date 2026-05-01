@@ -6,6 +6,7 @@ import { EventsSection } from '../components/EventsSection';
 import { ContactSection } from '../components/ContactSection';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { GallerySection } from '../components/GallerySection';
 
 export const HomePage = ({ theme, toggleTheme, navigateToBooking }: { theme: Theme, toggleTheme: () => void, navigateToBooking: () => void }) => {
   return (
@@ -63,6 +64,7 @@ export const HomePage = ({ theme, toggleTheme, navigateToBooking }: { theme: The
          </div>
       </div>
 
+      <GallerySection theme={theme} />
       <MenuSection theme={theme} />
       <EventsSection theme={theme} onBookClick={navigateToBooking} />
       <ContactSection theme={theme} />

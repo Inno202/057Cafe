@@ -9,8 +9,14 @@ export const BookingPage = ({ theme, toggleTheme, navigateToHome }: { theme: The
   const [bookingType, setBookingType] = useState<'private_event' | 'weekend_table'>('private_event');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const today = new Date().toISOString().split('T')[0];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+  };
 
   return (
     <div className={`min-h-screen transition-colors duration-700 font-sans ${theme === 'day' ? 'bg-stone-50' : 'bg-stone-950'}`}>
@@ -55,8 +61,31 @@ export const BookingPage = ({ theme, toggleTheme, navigateToHome }: { theme: The
                   </button>
                 </div>
 
-                <form className="space-y-6 md:space-y-8">
-                  <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                <form className="space-y-6 md:space-y-8" onSubmit={handleSubmit}>
+                  {isSubmitted ? (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-8 md:p-12 text-center flex flex-col items-center justify-center min-h-[300px]"
+                    >
+                      <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-6">
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      <h3 className={`text-2xl font-black mb-4 ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>Request Received!</h3>
+                      <p className={`text-sm md:text-base mb-8 max-w-md ${theme === 'day' ? 'text-stone-600' : 'text-stone-400'}`}>
+                        Thank you for considering 057 Cafè. Our team will review your request and get back to you shortly to confirm your booking.
+                      </p>
+                      <button 
+                        type="button" 
+                        onClick={() => setIsSubmitted(false)}
+                        className={`font-bold uppercase tracking-widest text-xs underline ${theme === 'day' ? 'text-amber-700' : 'text-amber-500'}`}
+                      >
+                        Submit another request
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <>
+                      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                      <div className="space-y-2">
                         <label className={`text-[10px] font-black uppercase tracking-widest ${theme === 'day' ? 'text-stone-400' : 'text-stone-500'}`}>Full Name</label>
                         <input type="text" className={`w-full p-3 md:p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all text-sm md:text-base ${theme === 'day' ? 'bg-stone-50 border-stone-100 focus:ring-amber-500 text-stone-900' : 'bg-stone-900 border-stone-800 focus:ring-amber-500 text-white'}`} placeholder="John Doe" />
@@ -146,9 +175,11 @@ export const BookingPage = ({ theme, toggleTheme, navigateToHome }: { theme: The
                     </p>
                   </div>
 
-                  <button className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 md:py-6 rounded-2xl md:rounded-3xl font-black uppercase tracking-[0.2em] md:tracking-[0.3em] shadow-xl transition-all transform active:scale-95 text-sm sm:text-base md:text-xl">
+                  <button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 md:py-6 rounded-2xl md:rounded-3xl font-black uppercase tracking-[0.2em] md:tracking-[0.3em] shadow-xl transition-all transform active:scale-95 text-sm sm:text-base md:text-xl">
                      {bookingType === 'private_event' ? 'Request Reservation' : 'Book Table'}
                   </button>
+                    </>
+                  )}
                 </form>
              </div>
           </div>

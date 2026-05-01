@@ -18,7 +18,14 @@ export const ContactSection = ({ theme }: { theme: Theme }) => {
                   <p className={`text-xs md:text-sm leading-relaxed ${theme === 'day' ? 'text-stone-500' : 'text-stone-400'}`}>
                     368 Stateway, Doorn<br/>Welkom, 9459
                   </p>
-                  <button className="text-amber-600 font-bold text-[10px] mt-3 underline">Get Directions</button>
+                  <a 
+                    href="https://www.google.com/maps/dir/?api=1&destination=057+Caf%C3%A9+Grill+and+Lounge,+368+Stateway,+Doorn,+Welkom,+9459" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block text-amber-600 font-bold text-[10px] mt-3 underline hover:text-amber-700 transition-colors"
+                  >
+                    Get Directions
+                  </a>
                 </div>
               </div>
 
@@ -28,8 +35,8 @@ export const ContactSection = ({ theme }: { theme: Theme }) => {
                 </div>
                 <div>
                   <h4 className={`text-lg font-bold mb-2 ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>Direct Call</h4>
-                  <p className={`text-base font-bold ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>+27 72 223 0708</p>
-                  <p className={`text-[10px] mt-1 ${theme === 'day' ? 'text-stone-400' : 'text-stone-500'}`}>bookings@057cafe.co.za</p>
+                  <a href="tel:+27722230708" className={`block text-base font-bold hover:text-amber-600 transition-colors ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>+27 72 223 0708</a>
+                  <a href="mailto:bookings@057cafe.co.za" className={`block text-[10px] mt-1 hover:text-amber-600 transition-colors ${theme === 'day' ? 'text-stone-400' : 'text-stone-500'}`}>bookings@057cafe.co.za</a>
                 </div>
               </div>
 
@@ -46,6 +53,18 @@ export const ContactSection = ({ theme }: { theme: Theme }) => {
                   </div>
                 </div>
               </div>
+          </div>
+
+          <div className={`mt-16 w-full h-[300px] md:h-[400px] rounded-[2rem] overflow-hidden shadow-sm ${theme === 'day' ? 'bg-stone-100' : 'bg-stone-800 opacity-80'}`}>
+            <iframe 
+              src="https://maps.google.com/maps?q=057%20Caf%C3%A9%20Grill%20and%20Lounge,%20368%20Stateway,%20Doorn,%20Welkom,%209459&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen={false} 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
 
           <div className={`mt-20 p-6 md:p-10 rounded-[3rem] text-center ${theme === 'day' ? 'bg-stone-50' : 'bg-stone-950'}`}>
