@@ -27,7 +27,7 @@ export const Footer = ({ theme }: { theme: Theme }) => {
              </div>
           </div>
           <div className={`mt-16 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'day' ? 'border-stone-100 text-stone-400' : 'border-stone-900 text-stone-600'}`}>
-             <span>&copy; 2026 057 Cafe & Lounge Group. All rights reserved.</span>
+             <span>&copy; 2026 057 Cafe & Lounge. All rights reserved.</span>
              <div className="flex gap-8">
                 <a href="#" className="hover:text-amber-600">Privacy</a>
                 <a href="#" className="hover:text-amber-600">Terms</a>
