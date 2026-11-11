@@ -1,66 +1,48 @@
-import { motion, AnimatePresence } from 'motion/react';
 import { ChevronRight } from 'lucide-react';
-import { Theme } from '../../models/types';
+import { useContent } from '../../content/ContentProvider';
+import { Emphasis } from '../../content/emphasis';
+import type { Theme } from '../../content/types';
+import { pathFor } from '../../router';
 
-export const Hero = ({ theme, onBookClick }: { theme: Theme, onBookClick?: () => void }) => {
+export const Hero = ({ theme, onBookClick }: { theme: Theme; onBookClick: (event: React.MouseEvent) => void }) => {
+  const { home } = useContent();
+  const hero = theme === 'day' ? home.heroDay : home.heroNight;
+
   return (
-    <section className="relative min-h-screen sm:h-screen pt-24 sm:pt-0 flex items-center overflow-hidden">
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={theme}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0"
-        >
-          <img 
-            src={theme === 'day' 
-              ? "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920&h=1080"
-              : "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=1920&h=1080"
-            }
-            alt="Cafe Interior"
-            className="w-full h-full object-cover"
+    <section className="relative flex min-h-svh items-center overflow-hidden bg-stone-900 pt-24 pb-16">
+      {/* Both photos stay mounted so switching day/night is a cross-fade, not a reload. */}
+      {(['day', 'night'] as const).map((mode) => {
+        const block = mode === 'day' ? home.heroDay : home.heroNight;
+        return (
+          <img
+            key={mode}
+            src={block.image}
+            alt={mode === theme ? block.imageAlt : ''}
+            aria-hidden={mode !== theme}
+            fetchPriority={mode === theme ? 'high' : 'low'}
             referrerPolicy="no-referrer"
+            className={`absolute inset-0 size-full object-cover transition-opacity duration-500 ${mode === theme ? 'opacity-100' : 'opacity-0'}`}
           />
-          <div className={`absolute inset-0 ${theme === 'day' ? 'bg-stone-900/40' : 'bg-black/70'}`} />
-        </motion.div>
-      </AnimatePresence>
+        );
+      })}
+      <div className={`absolute inset-0 transition-colors duration-500 ${theme === 'day' ? 'bg-stone-950/55' : 'bg-black/70'}`} />
 
-      <div className="relative max-w-7xl mx-auto px-6 w-full text-white z-10">
-        <motion.div
-           initial={{ y: 30, opacity: 0 }}
-           animate={{ y: 0, opacity: 1 }}
-           transition={{ delay: 0.5, duration: 0.8 }}
-           className="max-w-2xl"
-        >
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-4 sm:mb-6 leading-[1.1] md:leading-tight tracking-tighter">
-            {theme === 'day' ? (
-              <>AUTHENTIC <span className="text-amber-500">GRILL</span> VIBES.</>
-            ) : (
-              <>ELITE <span className="text-amber-500">LOUNGE</span> LUXURY.</>
-            )}
+      <div className="wrap relative text-white">
+        <div key={theme} className="hero-enter max-w-3xl">
+          <h1 className="text-[clamp(2.5rem,9vw,6rem)] leading-[1.02] font-black tracking-[-0.03em] [--accent:var(--color-amber-500)]">
+            <Emphasis text={hero.heading} />
           </h1>
-          <p className="text-lg md:text-xl lg:text-2xl text-stone-200 mb-8 font-light italic">
-            {theme === 'day' 
-              ? "Experience the authentic taste of Mzansi with our slow-cooked African cuisines and signature grilled meats."
-              : "Stateway's premier destination for sophisticated nights, chilled vibes, and premium cocktails."}
-          </p>
-          <div className="flex flex-row gap-3 sm:gap-4 w-full">
-            <a href="#menu" className="bg-amber-600 hover:bg-amber-700 text-white px-5 sm:px-8 py-3 sm:py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all flex-1 sm:flex-none text-sm sm:text-base">
-              View Menu <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+          <p className="mt-6 max-w-xl text-lg text-stone-100 md:text-xl">{hero.text}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="#menu" className="btn btn-primary [--accent-fill:var(--color-amber-700)] [--accent-fill-hover:var(--color-amber-800)] [--on-accent:#fff]">
+              View Menu <ChevronRight size={18} aria-hidden="true" />
             </a>
-            <button onClick={onBookClick} className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-5 sm:px-8 py-3 sm:py-4 rounded-full font-bold transition-all flex-1 sm:flex-none text-sm sm:text-base text-center">
+            <a href={pathFor('booking')} onClick={onBookClick} className="btn btn-on-photo">
               Book Event
-            </button>
+            </a>
           </div>
-        </motion.div>
+        </div>
       </div>
-
-      {/* <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce">
-        <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Scroll Down</span>
-        <div className="w-px h-12 bg-white/30" />
-      </div> */}
     </section>
   );
 };

@@ -1,37 +1,210 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "@fontsource-variable/inter";
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-fill-hover: var(--accent-fill-hover);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Brand palette: amber on warm stone. Day is the default, night is the lounge. */
+:root,
+[data-theme="day"] {
+  --page: var(--color-stone-50);
+  --surface: #fff;
+  --ink: var(--color-stone-900);
+  --muted: var(--color-stone-600);
+  --line: var(--color-stone-200);
+  --accent: var(--color-amber-700);
+  --accent-fill: var(--color-amber-700);
+  --accent-fill-hover: var(--color-amber-800);
+  --on-accent: #fff;
+  --danger: var(--color-red-700);
+  color-scheme: light;
+}
+
+[data-theme="night"] {
+  --page: var(--color-stone-950);
+  --surface: var(--color-stone-900);
+  --ink: var(--color-stone-50);
+  --muted: var(--color-stone-400);
+  --line: var(--color-stone-800);
+  --accent: var(--color-amber-400);
+  --accent-fill: var(--color-amber-500);
+  --accent-fill-hover: var(--color-amber-400);
+  --on-accent: var(--color-stone-950);
+  --danger: var(--color-red-400);
+  color-scheme: dark;
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
   }
-  
+
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
   body {
-    @apply font-sans;
+    @apply bg-page font-sans text-ink antialiased;
+    caret-color: var(--accent);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: var(--color-amber-600);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  ::-webkit-scrollbar { width: 12px; }
+  ::-webkit-scrollbar-track { background: var(--page); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border: 3px solid var(--page);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-amber-600); }
+}
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-6xl px-5 sm:px-8; }
+
+  .section { @apply py-16 md:py-24; }
+
+  /* One heading style for every section. Wording stays upper case as written. */
+  .section-title {
+    @apply text-3xl font-black text-ink md:text-4xl;
+    letter-spacing: -0.03em;
+  }
+
+  /* Shared buttons. Every button on the site is one of these. */
+  .btn {
+    @apply inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full px-6 text-base font-semibold select-none;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out-strong);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled, .btn[aria-disabled="true"] { @apply cursor-not-allowed opacity-60; transform: none; }
+  .btn-sm { @apply min-h-11 px-4 text-sm; }
+
+  .btn-primary { @apply bg-accent-fill text-on-accent; }
+  .btn-secondary { @apply border border-ink/25 text-ink; }
+  .btn-on-photo { @apply border border-white/70 text-white; }
+  .btn-danger { @apply border border-danger/40 text-danger; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover:not(:disabled) { @apply bg-accent-fill-hover; }
+    .btn-secondary:hover:not(:disabled) { @apply border-ink bg-ink text-page; }
+    .btn-on-photo:hover { @apply bg-white text-stone-900; }
+    .btn-danger:hover:not(:disabled) { @apply border-danger bg-danger text-page; }
+  }
+
+  /* Text links and icon buttons. */
+  .link {
+    @apply font-semibold text-accent underline decoration-accent/40 underline-offset-4;
+    transition: text-decoration-color 160ms ease;
+  }
+  .link:hover { text-decoration-color: currentColor; }
+  .link-tap { @apply inline-flex min-h-11 items-center gap-2; }
+
+  .icon-btn {
+    @apply inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-current;
+    transition: background-color 160ms ease, transform 160ms var(--ease-out-strong);
+  }
+  .icon-btn:active { transform: scale(0.94); }
+  @media (hover: hover) and (pointer: fine) {
+    .icon-btn:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+  }
+
+  /* Form controls. 16px text keeps phones from zooming in on focus. */
+  .field-label { @apply mb-1.5 block text-sm font-medium text-ink; }
+  .field-help { @apply mt-1.5 text-sm text-muted; }
+  .field-error { @apply mt-1.5 text-sm font-medium text-danger; }
+  .field {
+    @apply block min-h-12 w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-base text-ink;
+    transition: border-color 160ms ease;
+  }
+  .field::placeholder { color: var(--muted); }
+  .field:hover { border-color: color-mix(in srgb, var(--ink) 35%, transparent); }
+  .field:focus-visible { outline-offset: 0; border-color: var(--accent); border-radius: 0.5rem; }
+  .field[aria-invalid="true"] { border-color: var(--danger); }
+  textarea.field { @apply min-h-28 resize-y; }
+  select.field {
+    @apply appearance-none pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+  }
+
+  .skip-link {
+    @apply fixed top-3 left-3 z-[100] -translate-y-20 rounded-full bg-ink px-5 py-3 font-semibold text-page;
+  }
+  .skip-link:focus { @apply translate-y-0; }
+
+  /* The one authored entrance: the banner text settles in once on load. */
+  .hero-enter > * {
+    animation: hero-enter 700ms var(--ease-out-strong) both;
+  }
+  .hero-enter > :nth-child(2) { animation-delay: 80ms; }
+  .hero-enter > :nth-child(3) { animation-delay: 160ms; }
+
+  .fade-in { animation: fade-in 200ms ease-out both; }
+
+  .prose-legal h2 { @apply mt-10 mb-3 text-xl font-bold text-ink; }
+  .prose-legal p, .prose-legal li { @apply text-base leading-relaxed text-muted; }
+  .prose-legal p + p { @apply mt-3; }
+  .prose-legal ul { @apply mt-3 list-disc space-y-2 pl-5; }
+  .prose-legal strong { @apply font-semibold text-ink; }
+}
+
+@keyframes hero-enter {
+  from { opacity: 0; transform: translateY(16px); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
+.nav-link { position: relative; }
+.nav-link::after {
+  content: "";
+  position: absolute;
+  inset: auto 0.75rem 0.5rem;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms var(--ease-out-strong);
 }
+.nav-link:hover::after, .nav-link:focus-visible::after { transform: scaleX(1); }
 
-::-webkit-scrollbar-track {
-  @apply bg-stone-100;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-stone-300 rounded-full border-4 border-stone-100;
-}
-
-.night-mode ::-webkit-scrollbar-track {
-  @apply bg-stone-900;
-}
-
-.night-mode ::-webkit-scrollbar-thumb {
-  @apply bg-stone-700 border-stone-900;
+.mobile-menu {
+  transition: opacity 200ms var(--ease-out-strong), transform 200ms var(--ease-out-strong);
+  @starting-style { opacity: 0; transform: translateY(-8px); }
 }

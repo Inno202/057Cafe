@@ -1,87 +1,95 @@
-import { MapPin, Phone, Clock, Instagram, Facebook } from 'lucide-react';
-import { Theme } from '../../models/types';
-import { SectionHeader } from './SectionHeader';
+import { useState } from 'react';
+import { MapPin } from 'lucide-react';
+import { useContent } from '../../content/ContentProvider';
+import { SocialLinks } from './SocialLinks';
 
-export const ContactSection = ({ theme }: { theme: Theme }) => {
+export const ContactSection = () => {
+  const { site } = useContent();
+  const [showMap, setShowMap] = useState(false);
+
   return (
-    <section id="contact" className={`py-16 md:py-24 ${theme === 'day' ? 'bg-white' : 'bg-stone-900'}`}>
-      <div className="max-w-4xl mx-auto px-6">
-          <SectionHeader title="VISIT THE 057" subtitle="GET IN TOUCH" theme={theme} />
-          
-          <div className="grid md:grid-cols-3 gap-10 mt-16">
-              <div className="flex flex-col items-center text-center gap-4">
-                <div className={`p-5 rounded-2xl shadow-sm ${theme === 'day' ? 'bg-stone-50 text-amber-700' : 'bg-stone-800 text-amber-400'}`}>
-                  <MapPin size={32} />
-                </div>
-                <div>
-                  <h4 className={`text-lg font-bold mb-2 ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>Location</h4>
-                  <p className={`text-xs md:text-sm leading-relaxed ${theme === 'day' ? 'text-stone-500' : 'text-stone-400'}`}>
-                    368 Stateway, Doorn<br/>Welkom, 9459
-                  </p>
-                  <a 
-                    href="https://www.google.com/maps/dir/?api=1&destination=057+Caf%C3%A9+Grill+and+Lounge,+368+Stateway,+Doorn,+Welkom,+9459" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-block text-amber-600 font-bold text-[10px] mt-3 underline hover:text-amber-700 transition-colors"
-                  >
-                    Get Directions
-                  </a>
-                </div>
-              </div>
+    <section id="contact" className="section bg-surface">
+      <div className="wrap">
+        <h2 className="section-title">{site.contactTitle}</h2>
 
-              <div className="flex flex-col items-center text-center gap-4">
-                <div className={`p-5 rounded-2xl shadow-sm ${theme === 'day' ? 'bg-stone-50 text-amber-700' : 'bg-stone-800 text-amber-400'}`}>
-                  <Phone size={32} />
-                </div>
-                <div>
-                  <h4 className={`text-lg font-bold mb-2 ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>Direct Call</h4>
-                  <a href="tel:+27722230708" className={`block text-base font-bold hover:text-amber-600 transition-colors ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>+27 72 223 0708</a>
-                  <a href="mailto:bookings@057cafe.co.za" className={`block text-[10px] mt-1 hover:text-amber-600 transition-colors ${theme === 'day' ? 'text-stone-400' : 'text-stone-500'}`}>bookings@057cafe.co.za</a>
-                </div>
-              </div>
-
-              <div className="flex flex-col items-center text-center gap-4">
-                <div className={`p-5 rounded-2xl shadow-sm ${theme === 'day' ? 'bg-stone-50 text-amber-700' : 'bg-stone-800 text-amber-400'}`}>
-                  <Clock size={32} />
-                </div>
-                <div>
-                  <h4 className={`text-lg font-bold mb-2 ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>Trading Hours</h4>
-                  <div className={`text-[10px] space-y-1 ${theme === 'day' ? 'text-stone-500' : 'text-stone-400'}`}>
-                    <p><span className="font-bold">Mon-Thu:</span> 10:00 - 22:00</p>
-                    <p><span className="font-bold">Fri-Sat:</span> 10:00 - 02:00</p>
-                    <p><span className="font-bold">Sun:</span> 11:00 - 20:00</p>
-                  </div>
-                </div>
-              </div>
-          </div>
-
-          <div className={`mt-16 w-full h-[300px] md:h-[400px] rounded-[2rem] overflow-hidden shadow-sm ${theme === 'day' ? 'bg-stone-100' : 'bg-stone-800 opacity-80'}`}>
-            <iframe 
-              src="https://maps.google.com/maps?q=057%20Caf%C3%A9%20Grill%20and%20Lounge,%20368%20Stateway,%20Doorn,%20Welkom,%209459&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen={false} 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
-
-          <div className={`mt-20 p-6 md:p-10 rounded-[3rem] text-center ${theme === 'day' ? 'bg-stone-50' : 'bg-stone-950'}`}>
-             <h4 className={`text-xl md:text-2xl font-black mb-4 ${theme === 'day' ? 'text-stone-900' : 'text-white'}`}>Connect with the Culture</h4>
-             <p className={`text-xs md:text-sm mb-8 ${theme === 'day' ? 'text-stone-600' : 'text-stone-400'}`}>Follow us on social media for daily specials and event announcements.</p>
-             <div className="flex justify-center gap-6">
-                <Instagram size={28} className="text-amber-600 hover:scale-110 transition-transform cursor-pointer" />
-                <a 
-                  href="https://www.facebook.com/p/057Caf%C3%A8-61564211750260/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:scale-110 transition-transform cursor-pointer"
-                >
-                  <Facebook size={28} className="text-amber-600" />
+        <div className="mt-10 grid gap-12 md:grid-cols-2 md:gap-16">
+          <dl className="space-y-8">
+            <div>
+              <dt className="text-lg font-bold">Location</dt>
+              <dd className="mt-2 leading-relaxed text-muted">
+                {site.street}
+                <br />
+                {site.city}, {site.postalCode}
+              </dd>
+              <dd>
+                <a href={site.directionsUrl} target="_blank" rel="noopener noreferrer" className="link link-tap">
+                  Get Directions
                 </a>
-             </div>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-lg font-bold">Direct Call</dt>
+              <dd>
+                <a href={`tel:${site.phone}`} className="link-tap text-lg font-semibold tabular-nums hover:text-accent">{site.phoneDisplay}</a>
+              </dd>
+              <dd>
+                <a href={`mailto:${site.email}`} className="link-tap break-all text-muted hover:text-accent">{site.email}</a>
+              </dd>
+            </div>
+            {site.hours.length > 0 && (
+              <div>
+                <dt className="text-lg font-bold">Trading Hours</dt>
+                <dd className="mt-2">
+                  <table className="text-muted tabular-nums">
+                    <tbody>
+                      {site.hours.map((row) => (
+                        <tr key={row.id}>
+                          <th scope="row" className="py-1 pr-6 text-left font-semibold text-ink">{row.label}</th>
+                          <td className="py-1">{row.opens} - {row.closes}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </dd>
+              </div>
+            )}
+          </dl>
+
+          <div>
+            {site.mapEmbedUrl && (
+              <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line bg-page">
+                {showMap ? (
+                  <iframe
+                    src={site.mapEmbedUrl}
+                    title={`Map showing ${site.fullName}`}
+                    className="size-full border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="flex size-full flex-col items-center justify-center gap-4 p-6 text-center">
+                    <MapPin size={32} aria-hidden="true" className="text-accent" />
+                    <p className="font-semibold">{site.street}, {site.city}</p>
+                    <button type="button" onClick={() => setShowMap(true)} className="btn btn-secondary btn-sm">
+                      Show map
+                    </button>
+                    <p className="max-w-xs text-sm text-muted">The map is loaded from Google Maps, which may set cookies.</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+        </div>
+
+        {(site.facebookUrl || site.instagramUrl) && (
+          <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-8">
+            <div>
+              {site.socialHeading && <h3 className="text-xl font-bold">{site.socialHeading}</h3>}
+              {site.socialText && <p className="mt-1 text-muted">{site.socialText}</p>}
+            </div>
+            <SocialLinks />
+          </div>
+        )}
       </div>
     </section>
   );
