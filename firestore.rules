@@ -1,0 +1,128 @@
+rules_version = '2';
+
+// 057 Cafè access rules. These are the real permission check: the admin
+// screens only hide what a person may not do, the rules refuse it.
+//
+// Roles (staff/{email}.role):
+//   owner   - everything, including managing staff
+//   manager - edit site content, handle and delete booking requests
+//   host    - see booking requests and mark them handled
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function email() {
+      return request.auth.token.email.lower();
+    }
+
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.email is string
+        && request.auth.token.email_verified == true;
+    }
+
+    function staffPath() {
+      return /databases/$(database)/documents/staff/$(email());
+    }
+
+    function hasRole(roles) {
+      return signedIn()
+        && exists(staffPath())
+        && get(staffPath()).data.active == true
+        && get(staffPath()).data.role in roles;
+    }
+
+    // Site content: anyone may read, only owners and managers may write.
+    match /content/{section} {
+      allow read: if true;
+
+      function validContent() {
+        let data = request.resource.data;
+        return section in ['site', 'home', 'menu', 'events', 'gallery', 'booking']
+          && data.keys().hasOnly(['data', 'version', 'updatedAt', 'updatedBy'])
+          && data.keys().hasAll(['data', 'version', 'updatedAt', 'updatedBy'])
+          && data.data is map
+          && data.data.size() <= 40
+          && data.version is int
+          && data.updatedAt == request.time
+          && data.updatedBy == email();
+      }
+
+      allow create: if hasRole(['owner', 'manager'])
+        && validContent()
+        && request.resource.data.version == 1;
+
+      // The version must go up by exactly one, so two people saving at the
+      // same time cannot silently overwrite each other.
+      allow update: if hasRole(['owner', 'manager'])
+        && validContent()
+        && request.resource.data.version == resource.data.version + 1;
+
+      allow delete: if false;
+    }
+
+    // Booking requests: the public may only create one, never read any.
+    match /bookings/{bookingId} {
+      function validBooking() {
+        let data = request.resource.data;
+        return data.keys().hasOnly(['type', 'name', 'phone', 'date', 'time', 'guests', 'details', 'event', 'status', 'createdAt', 'expireAt'])
+          && data.keys().hasAll(['type', 'name', 'phone', 'date', 'time', 'guests', 'details', 'event', 'status', 'createdAt', 'expireAt'])
+          && data.type in ['private_event', 'weekend_table']
+          && data.name is string && data.name.size() >= 2 && data.name.size() <= 80
+          && data.phone is string && data.phone.matches('^[0-9+ ()-]{7,20}$')
+          && data.date is string && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+          && data.time is string && data.time.matches('^[0-9]{2}:[0-9]{2}$')
+          && data.guests is string && data.guests.size() >= 1 && data.guests.size() <= 40
+          && data.details is string && data.details.size() <= 1000
+          && data.event is string && data.event.size() <= 80
+          && data.status == 'new'
+          && data.createdAt == request.time
+          && data.expireAt is timestamp
+          && data.expireAt > request.time + duration.value(300, 'd')
+          && data.expireAt < request.time + duration.value(430, 'd');
+      }
+
+      allow create: if validBooking();
+
+      allow read: if hasRole(['owner', 'manager', 'host']);
+
+      allow update: if hasRole(['owner', 'manager', 'host'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'handledBy', 'handledAt'])
+        && request.resource.data.status in ['new', 'confirmed', 'declined', 'done']
+        && request.resource.data.handledBy == email()
+        && request.resource.data.handledAt == request.time;
+
+      allow delete: if hasRole(['owner', 'manager']);
+    }
+
+    // Staff list: the document id is the person's lower-case email address.
+    match /staff/{staffEmail} {
+      function validStaff() {
+        let data = request.resource.data;
+        return staffEmail == staffEmail.lower()
+          && staffEmail.matches('^[^@/ ]+@[^@/ ]+[.][^@/ ]+$')
+          && staffEmail.size() <= 120
+          && data.keys().hasOnly(['name', 'role', 'active', 'updatedAt', 'updatedBy'])
+          && data.keys().hasAll(['name', 'role', 'active', 'updatedAt', 'updatedBy'])
+          && data.name is string && data.name.size() >= 1 && data.name.size() <= 80
+          && data.role in ['owner', 'manager', 'host']
+          && data.active is bool
+          && data.updatedAt == request.time
+          && data.updatedBy == email();
+      }
+
+      // Anyone signed in may look up their own record, to learn their role.
+      allow get: if signedIn() && (email() == staffEmail || hasRole(['owner']));
+      allow list: if hasRole(['owner']);
+
+      // Owners cannot change or remove their own record, so the last owner
+      // can never lock everyone out by mistake.
+      allow create: if hasRole(['owner']) && validStaff();
+      allow update: if hasRole(['owner']) && validStaff() && email() != staffEmail;
+      allow delete: if hasRole(['owner']) && email() != staffEmail;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
