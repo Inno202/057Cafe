@@ -22,11 +22,12 @@ Without Firebase configured the site still works and shows its built-in content.
    Under **Settings > Authorised domains** add the site's domain
    (for example `inno202.github.io` and `057cafe.co.za`).
 3. **Firestore Database**: create it in production mode.
-4. Copy `.env.example` to `.env.local` and fill in the four `VITE_FIREBASE_*` values.
+4. The live config is in `.env.production` (project `cafe-3155d`). For local work against the real project, copy it to `.env.local`.
 5. Publish the rules and the booking auto-delete policy:
 
    ```bash
-   npx firebase-tools@14 deploy --only firestore --project YOUR_PROJECT_ID
+   npx firebase-tools@14 login
+   npx firebase-tools@14 deploy --only firestore
    ```
 
 6. Create the first owner. Open the site at `/admin`, choose
