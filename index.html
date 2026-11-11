@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--CSP-->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>057 Cafè Grill and Lounge | Best Restaurant & Lounge in Welkom</title>
     
     <!-- Primary Meta Tags -->
@@ -25,53 +27,8 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#d97706" />
 
-    <!-- Schema.org for Local Business -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Restaurant",
-      "name": "057 Cafè Grill and Lounge",
-      "image": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "368 Stateway, Doorn",
-        "addressLocality": "Welkom",
-        "addressRegion": "Free State",
-        "postalCode": "9459",
-        "addressCountry": "ZA"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -27.9702,
-        "longitude": 26.7461
-      },
-      "url": "https://057cafe.co.za",
-      "telephone": "+27722230708",
-      "servesCuisine": "African, Grill, South African",
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday"],
-          "opens": "10:00",
-          "closes": "22:00"
-        },
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Friday", "Saturday"],
-          "opens": "10:00",
-          "closes": "02:00"
-        },
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": "Sunday",
-          "opens": "11:00",
-          "closes": "20:00"
-        }
-      ],
-      "menu": "https://057cafe.co.za/#menu",
-      "priceRange": "$$"
-    }
-    </script>
+    <!-- Schema.org data for the business: filled in from the site content at build time and kept current at runtime. -->
+    <script type="application/ld+json" id="business-data">__BUSINESS_DATA__</script>
   </head>
   <body>
     <div id="root"></div>
