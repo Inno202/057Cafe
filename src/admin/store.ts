@@ -5,7 +5,7 @@ import {
 } from 'firebase/auth';
 import {
   collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, startAfter,
-  updateDoc, type QueryDocumentSnapshot,
+  Timestamp, updateDoc, where, type QueryDocumentSnapshot,
 } from 'firebase/firestore/lite';
 import type { BookingInput, BookingStatus } from '../bookings/validate';
 import type { SectionKey } from '../content/types';
@@ -108,6 +108,17 @@ export async function fetchBookings(after: QueryDocumentSnapshot | null): Promis
 
 export const setBookingStatus = (id: string, status: BookingStatus) =>
   updateDoc(doc(db(), BOOKINGS_COLLECTION, id), { status, handledBy: myEmail(), handledAt: serverTimestamp() });
+
+/**
+ * Deletes booking requests that have passed their keep-until date. Runs when
+ * an owner or manager opens the inbox, so the 365-day limit in the Privacy
+ * Policy holds without a paid Firebase plan. Returns how many were removed.
+ */
+export async function purgeExpiredBookings(): Promise<number> {
+  const expired = await getDocs(query(collection(db(), BOOKINGS_COLLECTION), where('expireAt', '<', Timestamp.now()), limit(100)));
+  await Promise.all(expired.docs.map((item) => deleteDoc(item.ref)));
+  return expired.size;
+}
 
 export const deleteBooking = (id: string) => deleteDoc(doc(db(), BOOKINGS_COLLECTION, id));
 

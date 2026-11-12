@@ -4,7 +4,7 @@ import { BOOKING_RETENTION_DAYS } from '../../bookings/validate';
 import { pathFor, type Route } from '../../router';
 import { PageShell, type PageProps } from './PageShell';
 
-export const LEGAL_UPDATED = '11 November 2026';
+export const LEGAL_UPDATED = '12 November 2026';
 
 const LegalShell = ({ title, children, ...props }: PageProps & { title: string; children: ReactNode }) => (
   <PageShell {...props} page="inner" label={title}>
@@ -77,8 +77,8 @@ export const PrivacyPage = (props: PageProps) => {
 
       <h2>How long we keep it</h2>
       <p>
-        Booking requests are deleted {BOOKING_RETENTION_DAYS} days after they are sent, or sooner once they are no
-        longer needed. You can ask us to delete yours at any time.
+        We keep booking requests for no longer than {BOOKING_RETENTION_DAYS} days and delete them sooner once they
+        are no longer needed. You can ask us to delete yours at any time.
       </p>
 
       <h2>Your rights</h2>

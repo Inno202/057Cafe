@@ -23,7 +23,7 @@ Without Firebase configured the site still works and shows its built-in content.
    (for example `inno202.github.io` and `057cafe.co.za`).
 3. **Firestore Database**: create it in production mode.
 4. The live config is in `.env.production` (project `cafe-3155d`). For local work against the real project, copy it to `.env.local`.
-5. Publish the rules and the booking auto-delete policy:
+5. Publish the rules:
 
    ```bash
    npx firebase-tools@14 login
@@ -66,8 +66,9 @@ To try the admin area locally without touching the real project, set
 ## Data kept
 
 - Booking requests: name, phone, date, time, guests, event or occasion details.
-  Each carries an `expireAt` date 365 days ahead; the Firestore TTL policy in
-  `firestore.indexes.json` deletes it after that. The Privacy Policy states
+  Each carries an `expireAt` date 365 days ahead. Expired requests are deleted
+  whenever an owner or manager opens Booking requests in the admin area (this
+  works on the free Firebase plan). The Privacy Policy states
   this, so keep the two in step.
 - Staff: email address, name, role.
 

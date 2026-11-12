@@ -3,7 +3,7 @@ import type { QueryDocumentSnapshot } from 'firebase/firestore/lite';
 import { Trash2 } from 'lucide-react';
 import { BOOKING_RETENTION_DAYS, BOOKING_STATUSES, type BookingStatus } from '../bookings/validate';
 import { can, type Role } from './roles';
-import { deleteBooking, errorMessage, fetchBookings, setBookingStatus, type Booking } from './store';
+import { deleteBooking, errorMessage, fetchBookings, purgeExpiredBookings, setBookingStatus, type Booking } from './store';
 
 const STATUS_LABELS: Record<BookingStatus, string> = { new: 'New', confirmed: 'Confirmed', declined: 'Declined', done: 'Done' };
 const TYPE_LABELS = { private_event: 'Private event', weekend_table: 'Weekend table' } as const;
@@ -19,6 +19,7 @@ export function BookingsPanel({ role }: { role: Role }) {
     setBusy(true);
     setMessage('');
     try {
+      if (!after && can(role, 'deleteBookings')) await purgeExpiredBookings().catch(() => 0);
       const page = await fetchBookings(after);
       setBookings((current) => (after && current ? [...current, ...page.bookings] : page.bookings));
       setCursor(page.cursor);
@@ -60,7 +61,8 @@ export function BookingsPanel({ role }: { role: Role }) {
     <div>
       <h2 className="text-2xl font-black tracking-tight">Booking requests</h2>
       <p className="mt-1 text-muted">
-        Requests sent from the booking page, newest first. They are deleted automatically after {BOOKING_RETENTION_DAYS} days.
+        Requests sent from the booking page, newest first. Requests older than {BOOKING_RETENTION_DAYS} days are
+        removed whenever an owner or manager opens this page.
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">

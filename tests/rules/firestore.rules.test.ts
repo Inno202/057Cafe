@@ -190,3 +190,18 @@ describe('everything else', () => {
     await assertFails(setDoc(doc(user(OWNER), 'secrets', 'x'), { a: 1 }));
   });
 });
+
+describe('expired bookings', () => {
+  it('managers can find and delete them, hosts and visitors cannot query them', async () => {
+    const { query, where } = await import('firebase/firestore');
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'bookings', 'old'), { ...booking(), createdAt: new Date(0), expireAt: Timestamp.fromMillis(1000) });
+    });
+    const expired = (db: ReturnType<typeof visitor>) => query(collection(db, 'bookings'), where('expireAt', '<', Timestamp.now()));
+    await assertFails(getDocs(expired(visitor())));
+    const found = await assertSucceeds(getDocs(expired(user(MANAGER))));
+    if (found.size !== 1 || found.docs[0].id !== 'old') throw new Error('expected exactly the expired booking');
+    await assertFails(deleteDoc(doc(user(HOST), 'bookings', 'old')));
+    await assertSucceeds(deleteDoc(doc(user(MANAGER), 'bookings', 'old')));
+  });
+});
