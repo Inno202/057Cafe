@@ -14,7 +14,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     tagline: 'Grill & Lounge',
     fullName: '057 Cafè Grill & Lounge',
     footerName: '057 Cafe & Lounge',
-    footerBlurb: 'The heart of Welkom’s social scene. Morning meetings, afternoon meals, and late-night memories.',
+    footerBlurb: '',
     street: '368 Stateway, Doorn',
     city: 'Welkom',
     province: 'Free State',
@@ -61,7 +61,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     ],
     aboutImage: img('photo-1555939594-58d7cb561ad1', 800, 800),
     aboutImageAlt: 'Premium grilled meats',
-    aboutQuote: 'Welkom’s ultimate grill experience.',
+    aboutQuote: '',
   },
   menu: {
     title: 'THE TASTE OF 057',
